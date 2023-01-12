@@ -2,6 +2,8 @@
     This code works for integers only
     No Error handling for other cases has been done
     But for Integers, this code is complete
+
+    Also, Online compiler are not taking windows.h header, works fine with VSCode
 */
 #include <stdio.h>
 #include <stdlib.h>
