@@ -8,6 +8,8 @@ struct test{
     char var3;
     short var4;
 };
+// __attribute__((packed));
+// add the above line before the terminate of struct to see packed structure
 
 int main(){
     // fill values in t1 accordingly
