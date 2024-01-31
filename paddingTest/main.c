@@ -2,16 +2,16 @@
 #include <stdint.h>
 
 struct test{
-    // put your varables here
-    uint32_t var1;
-    uint8_t var2;
-    uint8_t var3;
-    uint8_t var4;
+    // put your variables here
+    char var1;
+    int var2;
+    char var3;
+    short var4;
 };
 
 int main(){
-    // fill values in t1 accoudingly
-    struct test t1 = {0xaa, 0xbb, 0xcc, 0xdd};
+    // fill values in t1 accordingly
+    struct test t1 = {0xa, 0x139, 0xd, 0x5858};
     char *p = (char *)&t1;
 
     for(unsigned long long i=0; i<sizeof(struct test); i++){
