@@ -20,7 +20,7 @@ int main(void){
 	scanf("%x", &PacketData);
 
 	struct Packet frame;
-	frame.CRC = (uint8_t)(PacketData & 0X4);
+	frame.CRC = (uint8_t)(PacketData & 0X3);
 	frame.STATUS = (uint8_t)( (PacketData>>2) & 0X1);
 	frame.PAYLOAD = (uint16_t)( (PacketData>>3) & 0XFFF);
 	frame.BAT = (uint8_t)( (PacketData>>15) & 0X7);
