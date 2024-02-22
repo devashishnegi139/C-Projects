@@ -1,22 +1,57 @@
+/*
+NOTE: The addition logic is not working
+still getting stuck in an infinite loop error
+*/
+
 #include <stdint.h>
 #include <stdio.h>
 #include <math.h>
 
-uint8_t bufferData[30];
-uint8_t index = 0;
+int8_t bufferData[30];
+uint8_t bufferIndex = 0;
+
+uint32_t leftBufferData;
+uint8_t leftFlag = 0;
+
+uint32_t rightBufferData;
+uint8_t rightFlag = 0;
+
+uint32_t answerBuffer;
 
 void delay(){
 	for(volatile uint32_t i=0; i<400000; i++);
 }
 
+void clearBuffer(){
+	for(uint8_t i=0; i<bufferIndex; i++){
+		bufferData[i] = -1;
+	}
+	bufferIndex = 0;
+	leftFlag = 0;
+	rightFlag = 0;
+    leftBufferData = 0;
+    rightBufferData = 0;
+}
+
 void AdditionLogic(){
-	uint32_t sumLeft = 0;
-    uint8_t temp = index-1;
-    for(uint8_t i=0; i<index; i++){
-        sumLeft += ( (bufferData[i]) * pow(10, temp));
-        temp--;
-    }
-    // while() // still stuck
+	uint8_t temp = bufferIndex-1;
+	if(leftFlag == 0){	// LB empty and so will be RB
+		for(uint8_t i=0; i<bufferIndex; i++){
+			leftBufferData += (bufferData[i]*pow(10,temp));
+		}
+		leftFlag = 1;
+	}else{	// LB has values
+		if(rightFlag == 0){	// LB has values, RB is empty
+			for(uint8_t i=0; i<bufferIndex; i++){
+				rightBufferData += (bufferData[i]*pow(10,temp));
+			}
+		rightFlag = 1;
+		}else{	// LB has values, RB has values
+			answerBuffer = leftBufferData + rightBufferData;
+			printf("\n%d", answerBuffer);
+			clearBuffer();
+		}
+	}
 }
 
 int main(void)
@@ -39,7 +74,7 @@ int main(void)
 	// Pull up needed only for columns, i.e. pin 4, 5, 6, 7
 	*GPIOC_PUPDR &= (0XFFFF0000);
 	*GPIOC_PUPDR |= (0X00005500);
-	
+
 
 	while(1){
 		// making R1 LOW
@@ -48,86 +83,86 @@ int main(void)
 
 		if(!(*GPIOC_IDR & (1<<4))){
 			delay();
-//			printf("1 is pressed\n");
-			bufferData[index++] = 1; 
+			printf("1\n");
+			bufferData[bufferIndex++] = 1;
 		}
 		if(!(*GPIOC_IDR & (1<<5))){
 			delay();
-//			printf("2 is pressed\n");
-			bufferData[index++] = 2; 
+			printf("2\n");
+			bufferData[bufferIndex++] = 2;
 		}
 		if(!(*GPIOC_IDR & (1<<6))){
 			delay();
-//			printf("3 is pressed\n");
-			bufferData[index++] = 3; 
+			printf("3\n");
+			bufferData[bufferIndex++] = 3;
 		}
 		if(!(*GPIOC_IDR & (1<<7))){
 			delay();
-//			printf("4 is pressed\n");
+			printf("+\n");
 			AdditionLogic();
 		}
 
-		// making R2 LOW
-		*GPIOC_ODR |= (0X0F);
-		*GPIOC_ODR &= ~(1<<1);
+		// // making R2 LOW
+		// *GPIOC_ODR |= (0X0F);
+		// *GPIOC_ODR &= ~(1<<1);
 
-		if(!(*GPIOC_IDR & (1<<4))){
-			delay();
-			printf("5 is pressed\n");
-		}
-		if(!(*GPIOC_IDR & (1<<5))){
-			delay();
-			printf("6 is pressed\n");
-		}
-		if(!(*GPIOC_IDR & (1<<6))){
-			delay();
-			printf("7 is pressed\n");
-		}
-		if(!(*GPIOC_IDR & (1<<7))){
-			delay();
-			printf("8 is pressed\n");
-		}
+		// if(!(*GPIOC_IDR & (1<<4))){
+		// 	delay();
+		// 	printf("5 is pressed\n");
+		// }
+		// if(!(*GPIOC_IDR & (1<<5))){
+		// 	delay();
+		// 	printf("6 is pressed\n");
+		// }
+		// if(!(*GPIOC_IDR & (1<<6))){
+		// 	delay();
+		// 	printf("7 is pressed\n");
+		// }
+		// if(!(*GPIOC_IDR & (1<<7))){
+		// 	delay();
+		// 	printf("8 is pressed\n");
+		// }
 
-		// making R3 LOW
-		*GPIOC_ODR |= (0X0F);
-		*GPIOC_ODR &= ~(1<<2);
+		// // making R3 LOW
+		// *GPIOC_ODR |= (0X0F);
+		// *GPIOC_ODR &= ~(1<<2);
 
-		if(!(*GPIOC_IDR & (1<<4))){
-			delay();
-			printf("9 is pressed\n");
-		}
-		if(!(*GPIOC_IDR & (1<<5))){
-			delay();
-			printf("10 is pressed\n");
-		}
-		if(!(*GPIOC_IDR & (1<<6))){
-			delay();
-			printf("11 is pressed\n");
-		}
-		if(!(*GPIOC_IDR & (1<<7))){
-			delay();
-			printf("12 is pressed\n");
-		}
+		// if(!(*GPIOC_IDR & (1<<4))){
+		// 	delay();
+		// 	printf("9 is pressed\n");
+		// }
+		// if(!(*GPIOC_IDR & (1<<5))){
+		// 	delay();
+		// 	printf("10 is pressed\n");
+		// }
+		// if(!(*GPIOC_IDR & (1<<6))){
+		// 	delay();
+		// 	printf("11 is pressed\n");
+		// }
+		// if(!(*GPIOC_IDR & (1<<7))){
+		// 	delay();
+		// 	printf("12 is pressed\n");
+		// }
 
-		// making R1 LOW
-		*GPIOC_ODR |= (0X0F);
-		*GPIOC_ODR &= ~(1<<3);
+		// // making R1 LOW
+		// *GPIOC_ODR |= (0X0F);
+		// *GPIOC_ODR &= ~(1<<3);
 
-		if(!(*GPIOC_IDR & (1<<4))){
-			delay();
-			printf("13 is pressed\n");
-		}
-		if(!(*GPIOC_IDR & (1<<5))){
-			delay();
-			printf("14 is pressed\n");
-		}
-		if(!(*GPIOC_IDR & (1<<6))){
-			delay();
-			printf("15 is pressed\n");
-		}
-		if(!(*GPIOC_IDR & (1<<7))){
-			delay();
-			printf("16 is pressed\n");
-		}
+		// if(!(*GPIOC_IDR & (1<<4))){
+		// 	delay();
+		// 	printf("13 is pressed\n");
+		// }
+		// if(!(*GPIOC_IDR & (1<<5))){
+		// 	delay();
+		// 	printf("14 is pressed\n");
+		// }
+		// if(!(*GPIOC_IDR & (1<<6))){
+		// 	delay();
+		// 	printf("15 is pressed\n");
+		// }
+		// if(!(*GPIOC_IDR & (1<<7))){
+		// 	delay();
+		// 	printf("16 is pressed\n");
+		// }
 	}	// while loop end
 }
